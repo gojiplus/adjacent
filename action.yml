@@ -1,0 +1,28 @@
+name: 'Adjacent: Related Repos Recommender'
+description: 'Auto-suggests and adds similar repositories to your README based on shared GitHub topics.'
+author: 'Your Name or Org'
+branding:
+  icon: link
+  color: blue
+inputs:
+  repo:
+    description: 'Target repository in owner/name format (e.g., soodoku/fastsql)'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install requests
+      shell: bash
+
+    - name: Run adjacent
+      env:
+        GITHUB_TOKEN: ${{ inputs.token || secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY: ${{ inputs.repo }}
+      run: python .github/scripts/adjacent.py
+      shell: bash
