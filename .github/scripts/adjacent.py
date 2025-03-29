@@ -1,3 +1,4 @@
+# .github/scripts/adjacent.py
 import os
 import requests
 
@@ -37,15 +38,16 @@ def find_adjacent(owner, repo_name, topics):
 def update_readme(related):
     with open("README.md", "r", encoding="utf-8") as f:
         lines = f.readlines()
-
+    
     header = "## 🔗 Adjacent Repositories"
     start = next((i for i, l in enumerate(lines) if header in l), -1)
+    
     block = [f"{header}\n\n"]
     for full_name, desc, tags in related[:5]:
         url = f"https://github.com/{full_name}"
         desc_str = f" — {desc}" if desc else ""
         block.append(f"- [{full_name}]({url}){desc_str}\n")
-
+    
     if start >= 0:
         end = start + 1
         while end < len(lines) and lines[end].startswith("- "):
@@ -53,7 +55,7 @@ def update_readme(related):
         lines[start:end] = block
     else:
         lines.append("\n" + "".join(block))
-
+    
     with open("README.md", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
@@ -63,7 +65,7 @@ if __name__ == "__main__":
     if not topics:
         print("No topics found.")
         exit(0)
-
+    
     related = find_adjacent(owner, repo, topics)
     if related:
         update_readme(related)
