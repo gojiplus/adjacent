@@ -1,6 +1,6 @@
 name: 'Adjacent: Related Repos Recommender'
 description: 'Auto-suggests and adds similar repositories to your README based on shared GitHub topics.'
-author: 'Your Name or Org'
+author: 'Gaurav Sood'
 branding:
   icon: link
   color: blue
