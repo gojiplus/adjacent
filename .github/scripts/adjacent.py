@@ -177,7 +177,7 @@ def find_adjacent_combined(owner, repo_name, topics, readme_content, weight_topi
 def update_readme(related):
     """
     Update README.md with adjacent repositories.
-    Always overwrites the existing Adjacent Repositories section.
+    Completely replaces the existing Adjacent Repositories section.
     
     Args:
         related (list): List of tuples containing repository information
@@ -188,18 +188,12 @@ def update_readme(related):
         lines = f.readlines()
     
     header = "## 🔗 Adjacent Repositories"
-    start = next((i for i, l in enumerate(lines) if header in l), -1)
     
     # Prepare the new block of repositories
     block = [f"{header}\n\n"]
     
-    # Take the first 5 unique repositories
-    seen = set()
+    # Take the first 5 repositories
     for full_name, desc, tags, score in related[:5]:
-        # Skip if already seen
-        if full_name in seen:
-            continue
-        
         url = f"https://github.com/{full_name}"
         
         # Clean up description
@@ -207,20 +201,29 @@ def update_readme(related):
         desc_str = f" — {clean_desc}" if clean_desc else ""
         
         block.append(f"- [{full_name}]({url}){desc_str}\n")
-        seen.add(full_name)
     
-    # Replace or append the block
-    if start >= 0:
-        end = start + 1
-        while end < len(lines) and lines[end].startswith("- "):
-            end += 1
-        lines[start:end] = block
-    else:
-        lines.append("\n" + "".join(block))
+    # Find and replace the entire section
+    new_lines = []
+    section_started = False
+    
+    for line in lines:
+        if line.startswith("## 🔗 Adjacent Repositories"):
+            section_started = True
+            new_lines.extend(block)
+        elif section_started and line.startswith("## "):
+            # Another section starts, stop replacing
+            section_started = False
+            new_lines.append(line)
+        elif not section_started:
+            new_lines.append(line)
+    
+    # If section was not found, append at the end
+    if not any(header in line for line in new_lines):
+        new_lines.extend(["\n"] + block)
     
     # Write back to README
     with open("README.md", "w", encoding="utf-8") as f:
-        f.writelines(lines)
+        f.writelines(new_lines)
 
 if __name__ == "__main__":
     owner, repo = REPO.split("/")
