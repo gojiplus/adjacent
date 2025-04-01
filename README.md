@@ -24,26 +24,32 @@ Here's a repository that uses this GitHub Action: https://github.com/notnews/fox
 Save the following to `.github/workflows/adjacent.yml`:
 
 ```yaml
-name: Adjacent Recommender
+name: Find Adjacent Repositories
 
 on:
-  workflow_dispatch:
-    inputs:
-      repo:
-        description: 'Target repo (owner/name)'
-        required: true
   schedule:
-    - cron: '0 5 * * 0'  # every Sunday
+    - cron: '0 5 * * 0'   # Every Sunday at 5am UTC
+  workflow_dispatch:
 
 jobs:
-  update-adjacent:
+  recommend-repos:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: your-username/adjacent@v1
+      - name: Adjacent Repositories Recommender
+        uses: gojiplus/adjacent@v1.3
         with:
-          repo: ${{ github.event.inputs.repo }}
+          token: ${{ secrets.GITHUB_TOKEN }}  # ✅ Pass the required token
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add README.md
+          git commit -m "Update adjacent repositories [automated]" || echo "No changes to commit"
+          git push
 
 ```
 
