@@ -176,41 +176,40 @@ def find_adjacent_combined(owner, repo_name, topics, readme_content, weight_topi
 
 def update_readme(related):
     """
-    Update README.md with adjacent repositories, 
-    ensuring no duplicate repository links are added.
+    Update README.md with adjacent repositories.
+    Always overwrites the existing Adjacent Repositories section.
     
     Args:
         related (list): List of tuples containing repository information
                         Each tuple is expected to be (full_name, desc, tags, _)
     """
+    # Read existing README
     with open("README.md", "r", encoding="utf-8") as f:
         lines = f.readlines()
     
     header = "## 🔗 Adjacent Repositories"
     start = next((i for i, l in enumerate(lines) if header in l), -1)
     
-    # Use a set to track unique repositories to prevent duplicates
-    unique_repos = set()
+    # Prepare the new block of repositories
     block = [f"{header}\n\n"]
     
+    # Take the first 5 unique repositories
+    seen = set()
     for full_name, desc, tags, score in related[:5]:
-        # Skip if this repository has already been added
-        if full_name in unique_repos:
+        # Skip if already seen
+        if full_name in seen:
             continue
         
         url = f"https://github.com/{full_name}"
         
-        # Find the best non-empty description
+        # Clean up description
         clean_desc = desc.strip() if desc else ""
-        
-        # Create description string if available
         desc_str = f" — {clean_desc}" if clean_desc else ""
         
         block.append(f"- [{full_name}]({url}){desc_str}\n")
-        
-        # Add to the set of unique repositories
-        unique_repos.add(full_name)
+        seen.add(full_name)
     
+    # Replace or append the block
     if start >= 0:
         end = start + 1
         while end < len(lines) and lines[end].startswith("- "):
@@ -219,6 +218,7 @@ def update_readme(related):
     else:
         lines.append("\n" + "".join(block))
     
+    # Write back to README
     with open("README.md", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
