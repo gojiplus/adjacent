@@ -193,13 +193,19 @@ def update_readme(related):
     unique_repos = set()
     block = [f"{header}\n\n"]
     
-    for full_name, desc, tags, _ in related[:5]:
+    for full_name, desc, tags, score in related[:5]:
         # Skip if this repository has already been added
         if full_name in unique_repos:
             continue
         
         url = f"https://github.com/{full_name}"
-        desc_str = f" — {desc}" if desc else ""
+        
+        # Find the best non-empty description
+        clean_desc = desc.strip() if desc else ""
+        
+        # Create description string if available
+        desc_str = f" — {clean_desc}" if clean_desc else ""
+        
         block.append(f"- [{full_name}]({url}){desc_str}\n")
         
         # Add to the set of unique repositories
