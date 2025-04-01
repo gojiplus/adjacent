@@ -17,6 +17,8 @@ Perfect for discovery, organization, and letting your users explore similar tool
 
 ## 📦 Usage
 
+Here's a repository that uses this GitHub Action: https://github.com/notnews/fox_news_transcripts/
+
 ### 1. **Add to your workflow**
 
 Save the following to `.github/workflows/adjacent.yml`:
