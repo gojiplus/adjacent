@@ -190,55 +190,50 @@ def find_adjacent_combined(owner, repo_name, topics, readme_content, weight_topi
     return sorted(related, key=lambda x: -x[3])
 
 def update_readme(related):
-    """
-    Update README.md with adjacent repositories.
-    Completely replaces the existing Adjacent Repositories section.
+    logger.info("Updating README with adjacent repositories")
     
-    Args:
-        related (list): List of tuples containing repository information
-                        Each tuple is expected to be (full_name, desc, tags, _)
-    """
-    # Read existing README
-    with open("README.md", "r", encoding="utf-8") as f:
-        lines = f.readlines()
-    
+    try:
+        with open("README.md", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        lines = []
+
     header = "## 🔗 Adjacent Repositories"
-    
-    # Prepare the new block of repositories
     block = [f"{header}\n\n"]
-    
-    # Take the first 5 repositories
+
     for full_name, desc, tags, score in related[:5]:
         url = f"https://github.com/{full_name}"
-        
-        # Clean up description
         clean_desc = desc.strip() if desc else ""
         desc_str = f" — {clean_desc}" if clean_desc else ""
-        
         block.append(f"- [{full_name}]({url}){desc_str}\n")
-    
-    # Find and replace the entire section
+
+    # Rebuild the README
+    in_section = False
+    section_found = False
     new_lines = []
-    section_started = False
-    
+
     for line in lines:
-        if line.startswith("## 🔗 Adjacent Repositories"):
-            section_started = True
+        if line.strip() == header:
             new_lines.extend(block)
-        elif section_started and line.startswith("## "):
-            # Another section starts, stop replacing
-            section_started = False
-            new_lines.append(line)
-        elif not section_started:
-            new_lines.append(line)
-    
-    # If section was not found, append at the end
-    if not any(header in line for line in new_lines):
+            in_section = True
+            section_found = True
+            continue
+        if in_section:
+            if line.strip().startswith("## ") and line.strip() != header:
+                new_lines.append(line)
+                in_section = False
+            continue
+        new_lines.append(line)
+
+    if not section_found:
+        if new_lines and not new_lines[-1].endswith("\n"):
+            new_lines.append("\n")
         new_lines.extend(["\n"] + block)
-    
-    # Write back to README
+
     with open("README.md", "w", encoding="utf-8") as f:
         f.writelines(new_lines)
+
+    logger.info("README update complete")
 
 if __name__ == "__main__":
     owner, repo = REPO.split("/")
