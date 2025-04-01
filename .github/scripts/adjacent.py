@@ -39,7 +39,11 @@ def get_user_repos(owner):
         r = requests.get(url, headers=HEADERS)
         time.sleep(1)  # More cautious rate limit handling
         page_repos = r.json()
-        repos.extend(page_repos)
+        if isinstance(page_repos, list):
+            repos.extend(page_repos)
+        else:
+            logger.warning(f"Unexpected response when fetching repos: {page_repos}")
+            break
         link_header = r.headers.get('Link', '')
         url = None
         for link in link_header.split(','):
