@@ -1,9 +1,19 @@
 import os
+import logging
 import requests
 import base64
 import re
+import time
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 REPO = os.getenv("GITHUB_REPOSITORY")  # e.g., 'soodoku/bloomjoin'
 TOKEN = os.getenv("GITHUB_TOKEN")
@@ -13,74 +23,75 @@ HEADERS = {
 }
 
 def get_topics(owner, repo):
+    logger.info(f"Fetching topics for {owner}/{repo}")
     url = f"https://api.github.com/repos/{owner}/{repo}/topics"
     r = requests.get(url, headers=HEADERS)
-    return r.json().get("names", []) if r.status_code == 200 else []
+    time.sleep(0.5)  # Rate limit handling
+    topics = r.json().get("names", []) if r.status_code == 200 else []
+    logger.info(f"Found {len(topics)} topics")
+    return topics
 
 def get_user_repos(owner):
+    logger.info(f"Fetching repositories for {owner}")
     url = f"https://api.github.com/users/{owner}/repos?per_page=100&type=owner"
     repos = []
     while url:
         r = requests.get(url, headers=HEADERS)
-        repos.extend(r.json())
+        time.sleep(1)  # More cautious rate limit handling
+        page_repos = r.json()
+        repos.extend(page_repos)
         link_header = r.headers.get('Link', '')
         url = None
         for link in link_header.split(','):
             if 'rel="next"' in link:
                 url = link.split(';')[0].strip('<>')
                 break
+    logger.info(f"Total repositories found: {len(repos)}")
     return repos
 
 def get_readme_content(owner, repo):
-    """Fetch README content from a repository"""
+    logger.info(f"Fetching README for {owner}/{repo}")
     url = f"https://api.github.com/repos/{owner}/{repo}/readme"
     r = requests.get(url, headers=HEADERS)
+    time.sleep(0.5)  # Rate limit handling
     if r.status_code == 200:
         content = r.json().get("content", "")
         if content:
             try:
                 decoded = base64.b64decode(content).decode('utf-8')
-                # Clean the markdown content
                 cleaned = clean_markdown(decoded)
+                logger.info(f"README successfully retrieved and cleaned (length: {len(cleaned)} chars)")
                 return cleaned
             except Exception as e:
-                print(f"Error decoding README for {owner}/{repo}: {e}")
+                logger.warning(f"Error decoding README: {e}")
+    logger.info("No README content found")
     return ""
 
 def clean_markdown(text):
-    """Clean markdown content to improve text similarity comparison"""
-    # Remove code blocks
     text = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
-    # Remove inline code
     text = re.sub(r'`.*?`', '', text)
-    # Remove links but keep the text
     text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
-    # Remove headers
     text = re.sub(r'#+\s+', '', text)
-    # Remove HTML tags
     text = re.sub(r'<[^>]+>', '', text)
-    # Remove images
     text = re.sub(r'!\[[^\]]*\]\([^)]+\)', '', text)
-    # Remove extra whitespace
+    text = re.sub(r'^[-*]\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\|.*?\|', '', text)
+    text = re.sub(r'---+', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
 def compute_readme_similarity(text1, text2):
-    """Compute cosine similarity between two README texts using TF-IDF"""
     if not text1 or not text2:
         return 0.0
-    
-    # Create a TF-IDF vectorizer
+
     vectorizer = TfidfVectorizer(stop_words='english')
-    
     try:
-        # Calculate TF-IDF matrix
         tfidf_matrix = vectorizer.fit_transform([text1, text2])
-        # Calculate cosine similarity
         similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+        logger.info(f"README similarity computed: {similarity}")
         return similarity
     except Exception as e:
-        print(f"Error computing similarity: {e}")
+        logger.warning(f"Error computing README similarity: {e}")
         return 0.0
 
 def find_adjacent_by_topics(owner, repo_name, topics):
