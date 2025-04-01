@@ -175,18 +175,35 @@ def find_adjacent_combined(owner, repo_name, topics, readme_content, weight_topi
     return sorted(related, key=lambda x: -x[3])
 
 def update_readme(related):
-    """Update README.md with adjacent repositories"""
+    """
+    Update README.md with adjacent repositories, 
+    ensuring no duplicate repository links are added.
+    
+    Args:
+        related (list): List of tuples containing repository information
+                        Each tuple is expected to be (full_name, desc, tags, _)
+    """
     with open("README.md", "r", encoding="utf-8") as f:
         lines = f.readlines()
     
     header = "## 🔗 Adjacent Repositories"
     start = next((i for i, l in enumerate(lines) if header in l), -1)
     
+    # Use a set to track unique repositories to prevent duplicates
+    unique_repos = set()
     block = [f"{header}\n\n"]
+    
     for full_name, desc, tags, _ in related[:5]:
+        # Skip if this repository has already been added
+        if full_name in unique_repos:
+            continue
+        
         url = f"https://github.com/{full_name}"
         desc_str = f" — {desc}" if desc else ""
         block.append(f"- [{full_name}]({url}){desc_str}\n")
+        
+        # Add to the set of unique repositories
+        unique_repos.add(full_name)
     
     if start >= 0:
         end = start + 1
