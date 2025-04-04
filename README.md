@@ -1,5 +1,9 @@
 # 🤝 Adjacent — Related Repositories Recommender
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/gojiplus/adjacent)
+![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-adjacent%20Code%20Fixer-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 **Adjacent** is a GitHub Action that discovers and inserts a list of **related repositories** into your README based on shared GitHub topics.
 
 Perfect for discovery, organization, and letting your users explore similar tools you’ve built.
