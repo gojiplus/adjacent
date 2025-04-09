@@ -3,6 +3,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/gojiplus/adjacent)
 ![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-adjacent)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![Used By](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/gojiplus/adjacent/main/docs/adjacent.json)](https://github.com/search?q=gojiplus/adjacent+path%3A.github%2Fworkflows+language%3AYAML&type=code)
 
 **Adjacent** is a GitHub Action that discovers and inserts a list of **related repositories** into your README based on shared GitHub topics.
 
