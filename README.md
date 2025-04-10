@@ -61,3 +61,5 @@ jobs:
 ## 🔗 Adjacent Repositories
 
 - [gojiplus/reporoulette](https://github.com/gojiplus/reporoulette) — Sample Random GitHub Repositories
+
+✨ _Powered by [Adjacent](https://github.com/soodoku/adjacent)_ 🚀
