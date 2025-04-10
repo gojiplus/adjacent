@@ -209,7 +209,7 @@ def update_readme(related):
     
     # Add the fun line with emoji linking back to the GitHub Action
     block.append("\n")
-    block.append("✨ _Powered by [Adjacent](https://github.com/soodoku/adjacent)_ 🚀\n")
+    block.append("✨ _Powered by [Adjacent](https://github.com/gojiplus/adjacent)_ 🚀\n")
 
     # Rebuild the README
     in_section = False
