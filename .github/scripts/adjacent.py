@@ -206,6 +206,10 @@ def update_readme(related):
         clean_desc = desc.strip() if desc else ""
         desc_str = f" — {clean_desc}" if clean_desc else ""
         block.append(f"- [{full_name}]({url}){desc_str}\n")
+    
+    # Add the fun line with emoji linking back to the GitHub Action
+    block.append("\n")
+    block.append("✨ _Powered by [Adjacent](https://github.com/soodoku/adjacent)_ 🚀\n")
 
     # Rebuild the README
     in_section = False
