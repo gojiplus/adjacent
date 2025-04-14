@@ -19,6 +19,7 @@ jobs:
         action-list: >
           gojiplus/adjacent 
           recite/retract
-          matmulai/auto-pr   
+          matmulai/auto-pr
+          gojiplus/allstar
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
