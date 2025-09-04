@@ -5,18 +5,20 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 [![Used By](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/gojiplus/adjacent/main/docs/adjacent.json)](https://github.com/search?q=gojiplus/adjacent+path%3A.github%2Fworkflows+language%3AYAML&type=code)
 
-**Adjacent** is a GitHub Action that discovers and inserts a list of **related repositories** into your README based on shared GitHub topics.
+**Adjacent** is a GitHub Action that discovers and inserts a list of **related repositories** into your README based on shared GitHub topics and README content similarity.
 
-Perfect for discovery, organization, and letting your users explore similar tools you’ve built.
+Perfect for discovery, organization, and letting your users explore similar tools you've built.
 
 ---
 
 ## 🚀 Features
 
-- 🔎 Finds related repositories by topic similarity
-- 🧠 Ranks and inserts up to 5 adjacent repos into your `README.md`
-- 🔄 Runs on a schedule or manual trigger
-- 💬 Ideal for portfolios, developer tools, and curated ecosystems
+- 🔎 **Multiple similarity methods**: GitHub topics, README content, or combined approach
+- 🧠 **Smart ranking**: Configurable weighting between topics and content similarity
+- 🚫 **Repository exclusions**: Skip specific repositories you don't want to include
+- 📊 **Customizable output**: Set maximum number of repositories to display
+- 🔄 **Automated updates**: Runs on schedule or manual trigger
+- 💬 **Perfect for**: Portfolios, developer tools, and curated ecosystems
 
 ---
 
@@ -44,9 +46,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Adjacent Repositories Recommender
-        uses: gojiplus/adjacent@v1.3
+        uses: gojiplus/adjacent@v1.4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # ✅ Pass the required token
+          token: ${{ secrets.GITHUB_TOKEN }}  # ✅ Required: GitHub token
+          similarity_method: 'combined'        # Optional: topics, readme, or combined
+          topic_weight: '0.6'                  # Optional: weight for topics (0-1)
+          exclude_repos: 'template,archived'   # Optional: comma-separated exclusions
+          max_repos: '5'                       # Optional: max repositories to show
 
       - name: Commit and push changes
         run: |
@@ -57,6 +63,17 @@ jobs:
           git push
 
 ```
+
+## ⚙️ Configuration Options
+
+| Input | Description | Default | Example |
+|-------|-------------|---------|----------|
+| `token` | GitHub token for API access | **Required** | `${{ secrets.GITHUB_TOKEN }}` |
+| `repo` | Target repository | Current repo | `owner/repository` |
+| `similarity_method` | Method: `topics`, `readme`, or `combined` | `combined` | `topics` |
+| `topic_weight` | Weight for topics in combined method (0-1) | `0.6` | `0.8` |
+| `exclude_repos` | Comma-separated repository names to exclude | _(none)_ | `template,archived,old-project` |
+| `max_repos` | Maximum repositories to display | `5` | `3` |
 
 ## 🔗 Adjacent Repositories
 
