@@ -15,7 +15,7 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          pip install requests scikit-learn numpy
+          pip install -r requirements.txt
       - name: Run adjacent recommender
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

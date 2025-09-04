@@ -1,8 +1,8 @@
 name: 'Adjacent: Related Repos Recommender'
-description: 'Auto-suggests and adds similar repositories to your README based on shared GitHub topics and README content similarity.'
+description: 'Discover and showcase related repositories automatically. Uses GitHub topics and README similarity to find and add related repos to your project documentation.'
 author: 'Gaurav Sood'
 branding:
-  icon: link
+  icon: link-2
   color: blue
 inputs:
   repo:
@@ -21,6 +21,14 @@ inputs:
     description: 'Weight for topics in combined similarity method (0-1)'
     required: false
     default: '0.6'
+  exclude_repos:
+    description: 'Comma-separated list of repository names to exclude (e.g., "repo1,repo2,repo3")'
+    required: false
+    default: ''
+  max_repos:
+    description: 'Maximum number of repositories to include in output'
+    required: false
+    default: '5'
 runs:
   using: 'composite'
   steps:
@@ -29,7 +37,7 @@ runs:
       with:
         python-version: '3.10'
     - name: Install dependencies
-      run: pip install requests scikit-learn
+      run: pip install -r ${{ github.action_path }}/requirements.txt
       shell: bash
     - name: Run adjacent
       env:
@@ -37,5 +45,7 @@ runs:
         GITHUB_REPOSITORY: ${{ inputs.repo }}
         SIMILARITY_METHOD: ${{ inputs.similarity_method }}
         TOPIC_WEIGHT: ${{ inputs.topic_weight }}
+        EXCLUDE_REPOS: ${{ inputs.exclude_repos }}
+        MAX_REPOS: ${{ inputs.max_repos }}
       run: python ${{ github.action_path }}/.github/scripts/adjacent.py
       shell: bash
