@@ -21,5 +21,6 @@ jobs:
           recite/retract
           matmulai/auto-pr
           gojiplus/allstar
+          recite/citation-sync
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
