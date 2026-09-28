@@ -1,29 +1,29 @@
 name: Adjacent Recommender
 on:
   schedule:
-    - cron: '0 5 * * 0'   # Every Sunday at 5am UTC
+    - cron: '0 5 * * 0'
   workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: adjacent-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   update-adjacent:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v7.0.1
+      - uses: ./
+        id: adjacent
         with:
-          python-version: '3.x'
-      - name: Install dependencies
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit changes
+        if: steps.adjacent.outputs.changed == 'true'
         run: |
-          pip install -r requirements.txt
-      - name: Run adjacent recommender
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python .github/scripts/adjacent.py
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add README.md
-          git commit -m "Update adjacent repos [automated]" || echo "No changes to commit"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update adjacent repositories'
+            git push
+          fi

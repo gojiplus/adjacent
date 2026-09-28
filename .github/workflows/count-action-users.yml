@@ -5,15 +5,17 @@ on:
     - cron: '0 4 * * 0'
   workflow_dispatch:
 
+permissions:
+  contents: write
 jobs:
   count:
     runs-on: ubuntu-latest
       
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7.0.1
 
     - name: Generate user count JSON endpoint
-      uses: cicirello/count-action-users@v1
+      uses: cicirello/count-action-users@v1.0.9
       with:
         target-directory: docs
         action-list: >
