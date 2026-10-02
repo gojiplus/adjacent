@@ -24,7 +24,7 @@ idna==3.20
     #   requests
 iniconfig==2.3.0
     # via pytest
-isort==9.0.1
+isort==9.0.2
     # via -r requirements-dev.in
 joblib==1.6.0
     # via
