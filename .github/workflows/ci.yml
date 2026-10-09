@@ -23,3 +23,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - run: docker run --rm -v "$PWD:/work:ro" -w /work rhysd/actionlint:1.7.12
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: ./
+        id: adjacent
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          similarity_method: topics
+          dry_run: 'true'
+      - name: Check outputs and dry-run behavior
+        env:
+          CHANGED: ${{ steps.adjacent.outputs.changed }}
+          RECOMMENDATION_COUNT: ${{ steps.adjacent.outputs.recommendation_count }}
+        run: |
+          [[ "$CHANGED" == 'true' || "$CHANGED" == 'false' ]]
+          [[ "$RECOMMENDATION_COUNT" =~ ^[0-9]+$ ]]
+          git diff --exit-code

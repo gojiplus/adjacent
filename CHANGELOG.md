@@ -6,6 +6,7 @@
 - Update Black to 26.10.0, isort to 9.0.2, and charset-normalizer to 3.5.2.
 - Use setup-uv v10.3.0 in the action and CI.
 - Run CI once per pull-request commit while retaining checks on merges to `main`.
+- Exercise the composite action in CI with a live, read-only GitHub API smoke test and verify its outputs and dry-run behavior.
 
 The action inputs, outputs, and recommendation behavior are unchanged from v2.0. Pin workflows to `gojiplus/adjacent@v2.1` to use this release.
 
