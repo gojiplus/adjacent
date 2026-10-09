@@ -1,4 +1,4 @@
-PYTHON ?= python3
+PYTHON ?= uv run python
 PYTHON_VERSION ?= 3.13
 ACTIONLINT_IMAGE ?= rhysd/actionlint:1.7.12
 
@@ -21,5 +21,5 @@ test:
 	$(PYTHON) -m pytest
 
 ci-docker:
-	docker run --rm -v "$(CURDIR):/work:ro" -w /work -e PYTEST_ADDOPTS='-o cache_dir=/tmp/pytest-cache' -e PIP_ROOT_USER_ACTION=ignore python:$(PYTHON_VERSION) sh -c 'pip install --quiet -r requirements-dev.txt && make check-python PYTHON=python'
+	docker run --rm -v "$(CURDIR):/work:ro" -w /work -e PYTEST_ADDOPTS='-o cache_dir=/tmp/pytest-cache' -e PIP_ROOT_USER_ACTION=ignore -e UV_PROJECT_ENVIRONMENT=/tmp/venv python:$(PYTHON_VERSION) sh -c 'pip install --quiet uv && uv sync --locked && make check-python PYTHON="uv run python"'
 	docker run --rm -v "$(CURDIR):/work:ro" -w /work $(ACTIONLINT_IMAGE)

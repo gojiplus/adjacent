@@ -110,9 +110,8 @@ Review recommendations with `dry_run` before enabling writes. Default filtering 
 ## Development
 
 ```sh
-python3.13 -m venv .venv
-.venv/bin/python -m pip install -r requirements-dev.txt
-make check PYTHON=.venv/bin/python
+uv sync
+make check
 ```
 
 Install [actionlint](https://github.com/rhysd/actionlint) for workflow checks. `make check` runs Black, isort, flake8, pytest, and actionlint; `make format` applies Python formatting. Tests mock GitHub and do not need a token.
@@ -126,17 +125,12 @@ make ci-docker PYTHON_VERSION=3.14
 
 These commands use standard Python images and the upstream actionlint image, with the checkout mounted read-only. CI runs the same Python checks for both supported versions.
 
-Dependency inputs live in `requirements.in` and `requirements-dev.in`; compiled files pin the complete environment. Refresh them with [uv](https://docs.astral.sh/uv/pip/compile/):
-
-```sh
-uv pip compile --upgrade --python-version 3.13 requirements.in -o requirements.txt
-uv pip compile --upgrade --python-version 3.13 requirements-dev.in -o requirements-dev.txt
-```
+Dependencies are declared in `pyproject.toml` and pinned in `uv.lock`, which the action installs with `uv run --locked`. Refresh the lock with `uv lock --upgrade`.
 
 For a read-only live smoke test, export `GITHUB_TOKEN` through your normal credential setup, then run from this checkout:
 
 ```sh
-GITHUB_REPOSITORY=gojiplus/adjacent SIMILARITY_METHOD=topics DRY_RUN=true .venv/bin/python -m adjacent
+GITHUB_REPOSITORY=gojiplus/adjacent SIMILARITY_METHOD=topics DRY_RUN=true uv run python -m adjacent
 ```
 
 The entrypoint reads the uppercase equivalents of action inputs, except `repo` and `token`, which use `GITHUB_REPOSITORY` and `GITHUB_TOKEN`. `GITHUB_WORKSPACE` sets the checkout root; it defaults to the current directory. This internal module is run directly from the action checkout and is not published as a Python package.
