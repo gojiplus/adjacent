@@ -22,12 +22,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - run: docker run --rm -v "$PWD:/work:ro" -w /work rhysd/actionlint:1.7.12
+      - run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          "$(go env GOPATH)/bin/actionlint"
   action:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: ./
+        with:
+          path: action-source
+      - name: Prepare a separate caller workspace
+        run: |
+          cp action-source/README.md README.md
+          printf 'required-version = "==0.4.0"\n' > uv.toml
+      - uses: ./action-source
         id: adjacent
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -40,4 +48,5 @@ jobs:
         run: |
           [[ "$CHANGED" == 'true' || "$CHANGED" == 'false' ]]
           [[ "$RECOMMENDATION_COUNT" =~ ^[0-9]+$ ]]
-          git diff --exit-code
+          cmp action-source/README.md README.md
+          git -C action-source diff --exit-code
