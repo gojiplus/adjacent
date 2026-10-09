@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: gojiplus/adjacent@v2.0
+      - uses: gojiplus/adjacent@v2.1
         id: adjacent
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
