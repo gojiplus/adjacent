@@ -1,3 +1,16 @@
+[project]
+name = "adjacent"
+# Unpublished: releases are the git tags (v2.0, ...) that workflows pin with uses:.
+version = "0"
+requires-python = ">=3.13"
+dependencies = ["requests", "scikit-learn"]
+
+[dependency-groups]
+dev = ["black", "isort", "flake8", "pytest", "responses"]
+
+[tool.uv]
+package = false
+
 [tool.black]
 line-length = 88
 
