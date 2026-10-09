@@ -53,8 +53,8 @@ runs:
   steps:
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
+        working-directory: ${{ github.action_path }}
         python-version: '3.13'
-        # The default cache key hashes the caller's workspace, not this action's lock.
         enable-cache: false
     - name: Recommend repositories
       id: adjacent
