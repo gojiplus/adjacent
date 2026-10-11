@@ -139,6 +139,10 @@ The entrypoint reads the uppercase equivalents of action inputs, except `repo` a
 
 ## 🔗 Adjacent Repositories
 
+- [gojiplus/starclass](https://github.com/gojiplus/starclass) — Create Taxonomy and Tags for Liked Github Repositories
+- [gojiplus/allstar](https://github.com/gojiplus/allstar) — Tally stats across all the public repos. in your orgs. and under your username
+- [gojiplus/advertiser](https://github.com/gojiplus/advertiser) — Posts to bsky a one-liner about one of your repos. with some min. number of stars \(5\) using OpenAI
+- [gojiplus/ycombo](https://github.com/gojiplus/ycombo) — ycombo: Post a Random GitHub Repo to Hacker News
 - [gojiplus/reporoulette](https://github.com/gojiplus/reporoulette) — Sample Random GitHub Repositories
 
 _Powered by [Adjacent](https://github.com/gojiplus/adjacent)_
