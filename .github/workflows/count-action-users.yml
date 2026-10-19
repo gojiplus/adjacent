@@ -2,27 +2,33 @@ name: count-action-users
 
 on:
   schedule:
-    - cron: '0 4 * * 0'
+    - cron: '13 4 * * 0'
   workflow_dispatch:
 
-permissions:
-  contents: write
+permissions: {}
+
 jobs:
   count:
     runs-on: ubuntu-latest
-      
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-    - uses: actions/checkout@v7.0.1
-
-    - name: Generate user count JSON endpoint
-      uses: cicirello/count-action-users@v1.0.9
-      with:
-        target-directory: docs
-        action-list: >
-          gojiplus/adjacent 
-          recite/retract
-          matmulai/auto-pr
-          gojiplus/allstar
-          recite/citation-sync
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: '3.13'
+      - name: Update usage counts with bounded retries
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run --frozen python -m adjacent.usage
+      - name: Open badge update
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: automation/action-usage
+          add-paths: docs/*.json
+          commit-message: Update action usage badges
+          title: Update action usage badges
+          body: Refresh action usage after all GitHub queries succeed.
+          delete-branch: true
