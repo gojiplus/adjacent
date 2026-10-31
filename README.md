@@ -1,4 +1,4 @@
-# Adjacent
+# adjacent: help readers find your related repositories
 
 [![Release](https://img.shields.io/github/v/release/gojiplus/adjacent)](https://github.com/gojiplus/adjacent/releases)
 [![CI](https://github.com/gojiplus/adjacent/actions/workflows/ci.yml/badge.svg)](https://github.com/gojiplus/adjacent/actions/workflows/ci.yml)
