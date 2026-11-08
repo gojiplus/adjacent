@@ -143,7 +143,7 @@ The entrypoint reads the uppercase equivalents of action inputs, except `repo` a
 - [gojiplus/starclass](https://github.com/gojiplus/starclass) — Create Taxonomy and Tags for Liked Github Repositories
 - [gojiplus/allstar](https://github.com/gojiplus/allstar) — Tally stats across all the public repos. in your orgs. and under your username
 - [gojiplus/ycombo](https://github.com/gojiplus/ycombo) — ycombo: Post a Random GitHub Repo to Hacker News
-- [gojiplus/foliolab](https://github.com/gojiplus/foliolab) — FolioLab is an app that allows you to create a portfolio from your git repositories.
+- [gojiplus/reporoulette](https://github.com/gojiplus/reporoulette) — Sample Random GitHub Repositories
 
 _Powered by [Adjacent](https://github.com/gojiplus/adjacent)_
 
